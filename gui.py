@@ -82,7 +82,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
     # CHANGES STATUS OF CURRENT TASK
     def updateStatus(message):
-        queue[_index.s][5] = message
+        queue[_index.s][6] = message
         window["QUEUE"].Update(queue)
         window.refresh()
 

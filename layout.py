@@ -117,7 +117,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                 ],  
                 def_col_width=1000,
                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                headings=["File", "Title", "Tags", "Description", "Products", "Status"],
+                headings=["File", "Title", "Tags", "Description", "Types", "Products", "Status"],
                 display_row_numbers=True,
                 justification="center",
                 p=((0, 0), (20, 0)),

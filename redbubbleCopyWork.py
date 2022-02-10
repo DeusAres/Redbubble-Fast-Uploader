@@ -115,13 +115,13 @@ class bot:
     def listCommands(self, file):
         self.fill_entries = [
             lambda : self.driver.get("https://www.redbubble.com/portfolio/manage_works?ref=account-nav-dropdown"),
-            lambda : sleep(uniform(10,20)),
+            lambda : sleep(uniform(5,10)),
             lambda : self.driver.find_element(By.XPATH, "//div[@class='works']//div[1]//div[1]//div[1]").click(),
             lambda : sleep(uniform(5,10)),
             lambda : self.driver.find_element(By.XPATH, "//div[@class='works']//div[1]//div[1]//div[2]//a[3]").click(),
-            lambda : sleep(uniform(20,30)),
+            lambda : sleep(uniform(10,20)),
             lambda : self.driver.find_element(By.XPATH, '/html/body/div[1]/div[5]/div[2]/form/div/div[1]/div[1]/input').send_keys(file.images['normal']),
-            lambda : sleep(uniform(20, 30)),
+            lambda : sleep(uniform(10, 15)),
             lambda : self.driver.find_element(By.XPATH, "//input[@id='work_title_en']").clear(),
             lambda : sleep(uniform(5,10)),
             lambda : self.driver.find_element(By.XPATH, "//input[@id='work_title_en']").send_keys(file.title),
@@ -237,3 +237,5 @@ class file:
                 except:
                     print(f"Couldn't remove {each}")
 
+b = bot(None, None)
+input()
