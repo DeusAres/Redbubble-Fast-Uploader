@@ -12,4 +12,3 @@ for each in requirements:
     subprocess.run(f'pip install {each} --upgrade', shell=True)
 
 
-# Last try on push
