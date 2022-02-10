@@ -10,3 +10,6 @@ requirements  = [
 
 for each in requirements:
     subprocess.run(f'pip install {each} --upgrade', shell=True)
+
+
+# Well done.
