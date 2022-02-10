@@ -1,4 +1,7 @@
 import gui
 
-gui.login()
-gui.work() 
+driver = gui.login()
+
+gui.work(driver=driver)
+
+driver.quit()

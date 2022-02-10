@@ -13,7 +13,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     [sg.Input(enable_events=True, key='IMPORTTEXT', visible=False), 
                     sg.FileBrowse('Import settings', file_types=(('JSON', '.json'),), target='IMPORTTEXT'),
                     sg.Input(enable_events=True, key='EXPORTTEXT', visible=False), 
-                    sg.FileSaveAs('Export settings', file_types=(('JSON', '.json'),), target='EXPORTTEXT')]
+                    sg.FileSaveAs('Export settings', file_types=(('JSON', '.json'),), target='EXPORTTEXT')],
                     [sg.Text("Title"), sg.Push(), sg.Multiline(ctitle, key="CTITLE")],
                     [sg.Text("Tags"), sg.Push(), sg.Multiline(ctags, key="CTAGS")],
                     [sg.Text("Description"), sg.Push(), sg.Multiline(cdesc, key="CDESC")],
