@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import redbubbleCopyWork as rcw
+import sitedata
 
 GSIZE = 300
 
@@ -50,7 +51,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                 *[[sg.Checkbox(str(each), key='prod_'+each), 
                 sg.Push(), 
                 sg.Combo(listbox, default_value='rotated', key='type_'+each)] 
-                        for each in rcw.products.keys()]
+                        for each in sitedata.products.keys()]
             ], scrollable=True, key='CHECKS')
         ]
     ]
@@ -117,7 +118,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                 ],  
                 def_col_width=1000,
                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                headings=["File", "Title", "Tags", "Description", "Types", "Products", "Status"],
+                headings=["File", "Title", "Tags", "Description", "Types", "Background", "Products", "Status"],
                 display_row_numbers=True,
                 justification="center",
                 p=((0, 0), (20, 0)),

@@ -1,11 +1,13 @@
 import json
 import os
+import traceback
 import sys
 import threading
 from base64 import b64decode
 from io import BytesIO
 from random import uniform
 from time import sleep
+from pathlib import Path
 
 import PySimpleGUI as sg
 from PIL import Image
@@ -82,7 +84,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
     # CHANGES STATUS OF CURRENT TASK
     def updateStatus(message):
-        queue[_index.s][6] = message
+        queue[_index.s][-1] = message
         window["QUEUE"].Update(queue)
         window.refresh()
 
@@ -116,6 +118,15 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
         types = [each['type'] for each in prod_data.values() if each['enabled']]
         return list(dict.fromkeys(types))
 
+    # MOVING FILE TO COMPLETED
+    def moveToCompleted(file):
+        completed = Path(file).parent / "completed"
+        if not os.path.exists(completed):
+            os.mkdir(completed)
+
+        os.rename(file, completed / (Path(file).name))
+
+        
     # TREADING THE PREVIEW LOADING
     def threadPreview():
         try:
@@ -152,9 +163,9 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                         print(e)
 
                     i+=1
-                        
                     # Release the lock for changes
                     prevLock.release()
+
         except:
             try:
                 prevLock.release()
@@ -171,12 +182,14 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 updateStatus("Working")
 
                 # Send data to selenium to upload the new copy with pause and stop objects
-                file = rcw.file(*queue[_index.s][:5])
-                driver.copy_thread(file, queue[_index.s][5], status, _stop)
+                file = rcw.file(*queue[_index.s][:-2])
+                driver.copy_thread(file, queue[_index.s][-2], status, _stop)
+                moveToCompleted(queue[_index.s][0])
 
-                updateStatus("Cleared")
                 _index.add()
-                sleep(uniform(10, 20))
+                updateStatus("Sleeping")
+                sleep(uniform(100, 200))
+                updateStatus("Cleared")
 
             # Stopping because of user or no more entries
             except Exit as e:
@@ -196,9 +209,9 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
             # Must admit, if gui buttons are spammed to much between 
             # Start/Pause/Resume and Stop IDK what happens
             except Exception as e:
-                window["SPR"].Update('You are doing something terrible')
+                #window["SPR"].Update('You are doing something terrible')
+                print(traceback.format_exc())
                 window["STOP"].Update(disabled=True)
-                print(e)
                 sys.exit()
 
     while True:
@@ -253,7 +266,9 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                         # Entry is composed by
                         # File, title, desc, tags, products data, status
                         prod_data = parseDict(values)
-                        queue.append([values["LIST"][0], title, tags, desc, parseType(prod_data), prod_data, "Pending"])
+
+                        color = '#000000' # TODO ADD LAYOUT FOR COLOR
+                        queue.append([values["LIST"][0], title, tags, desc, parseType(prod_data), color, prod_data, "Pending"])
                         window['VTITLE'].Update('')
                         window['VDESC'].Update('')
                         window['VTAGS'].Update('')
