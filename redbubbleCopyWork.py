@@ -5,8 +5,6 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 
 import drawerFunctions as df
 import sitedata
@@ -174,31 +172,33 @@ class file:
             # saving the path
             if each in self.images.keys() and each != 'normal':
                 self.images[each] = f'{path}\\{each}.png'
-
+                temp2 = None
                 # creating the images
                 if each == 'rotated':
-                    temp2 = df.rotate(temp, -90)[0].save(f'.\\{each}.png', optimize=True)
+                    temp2 = df.rotate(temp, -90)[0]
                     
                 elif each == 'sticker':
-                    temp2 = df.strokeImage(temp, 4, background).save(f'.\\{each}.png', optimize=True)
+                    temp2 = df.strokeImage(temp, 4, background)
 
                 elif each == 'rotatedSticker':
                     temp2 = df.rotate(df.strokeImage(temp, 4, background), -90)[0]
 
                 elif each == 'squared':
+                    temp3 = df.cropToRealSize(temp)[0]
                     exp = int(min(temp.size) * 30 / 100)
-                    temp2 = df.backgroundPNG(*[each + exp for each in temp.size], background)
-                    temp2 = df.pasteItem(temp2, )
+                    temp2 = df.backgroundPNG(*[each + exp for each in temp3.size], background)[0]
+                    temp2 = df.pasteItem(temp2, temp3, *[temp2.size[i]//2-temp3.size[i]//2 for i in range(2)])
 
-                try:
+                
+                if temp2 != None:
                     temp2.save(f'{path}\\{each}.png', optimize=True)
-                except:
-                    pass
+                
+
     
-    def __delete__(self):
+    def delete(self):
         # removing all the images excluding normal
         for each in list(self.images.values())[1:]:
-            if each != None:
+            if each is not None:
                 try:
                     os.remove(each)
                 except:

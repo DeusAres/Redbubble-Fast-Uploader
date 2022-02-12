@@ -186,10 +186,10 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 driver.copy_thread(file, queue[_index.s][-2], status, _stop)
                 moveToCompleted(queue[_index.s][0])
 
-                _index.add()
                 updateStatus("Sleeping")
                 sleep(uniform(100, 200))
                 updateStatus("Cleared")
+                _index.add()
 
             # Stopping because of user or no more entries
             except Exit as e:
@@ -245,20 +245,30 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
         # ADDING AND REMOVING FROM LISTBOX
         if event in ["Add", "Remove"]:
-
+            #TODO INPUT NONE
             # ADDING
             if event == "Add":
                 # Checking that all datas are set before sending to queue
-                if all([each != "" for each in [
-                    "CTAGS","CDESC","CTITLE","VTAGS","VDESC","VTITLE"]]):
-                    title = stripChar("CTITLE").replace("@text", stripChar("VTITLE"))
-                    tags = stripChar("CTAGS") + ", " + stripChar("VTAGS")
-                    tags = tags.strip(',')
-                    desc = stripChar("CDESC").replace("@text", stripChar("VDESC"))
-
+                vtexts = all(
+                            [values[each] != "" for each in ["VTAGS","VDESC","VTITLE"]]
+                        )
+                ctexts = all(
+                            [values[each] != "" for each in ["CTAGS","CDESC","CTITLE"]]
+                        )
+                if (
+                    True in [vtexts, ctexts]
+                    and 
+                    True in [values[each] != '' and values[each] != 'None' for each in ["VCOLOR", "CCOLOR"]]
+                    ):
+                
                     # Adding if listbox file is selected
                     if values["LIST"]:
 
+                        title = stripChar("CTITLE").replace("@text", stripChar("VTITLE"))
+                        tags = stripChar("CTAGS") + ", " + stripChar("VTAGS")
+                        tags = tags.strip(',')
+                        desc = stripChar("CDESC").replace("@text", stripChar("VDESC"))
+                        
                         # Enable start
                         window["SPR"].Update(disabled=False)
                         
@@ -267,7 +277,11 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                         # File, title, desc, tags, products data, status
                         prod_data = parseDict(values)
 
-                        color = '#000000' # TODO ADD LAYOUT FOR COLOR
+                        if values['VCOLOR'] != '' or values['VCOLOR'] != 'None':
+                            color = values['VCOLOR']
+                        else:
+                            color = values['CCOLOR']
+                        
                         queue.append([values["LIST"][0], title, tags, desc, parseType(prod_data), color, prod_data, "Pending"])
                         window['VTITLE'].Update('')
                         window['VDESC'].Update('')
@@ -281,7 +295,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                             sleep(1)
                         toPop = window["LIST"].get_indexes()
                         listboxFiles.pop(toPop[0])
-
+                else:
+                    continue
             # REMOVING
             if event == 'Remove':
                 if values["LIST"]:
@@ -407,9 +422,5 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 del textDict
 
         # TODO TEST IMPORT EXPORT TEXT
-
-
-
-
 
     window.close()

@@ -18,6 +18,9 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     [sg.Text("Title"), sg.Push(), sg.Multiline(ctitle, key="CTITLE")],
                     [sg.Text("Tags"), sg.Push(), sg.Multiline(ctags, key="CTAGS")],
                     [sg.Text("Description"), sg.Push(), sg.Multiline(cdesc, key="CDESC")],
+                    
+                    [sg.Input('#000000', key='CCOLOR'), sg.ColorChooserButton("Color", target='CCOLOR')],
+                
                 ]
             )
         ]
@@ -31,13 +34,14 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     [sg.Text("Title"), sg.Push(), sg.Multiline(vtitle, key="VTITLE")],
                     [sg.Text("Tags"), sg.Push(), sg.Multiline(vtags, key="VTAGS")],
                     [sg.Text("Description"), sg.Push(), sg.Multiline(vdesc, key="VDESC")],
+                    [sg.Input('#000000', key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
                 ]
             )
         ]
     ]
 
     # NEEDED FOR FILE VARIATIONS
-    listbox = ['rotated', 'sticker', 'rotatedSticker']
+    listbox = ['rotated', 'sticker', 'rotatedSticker', 'squared']
     # PRODUCTS VARIATIONS ANS IMPORT/EXPORT
     products = [
         [   

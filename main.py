@@ -4,4 +4,7 @@ driver = gui.login()
 
 gui.work(driver=driver)
 
-driver.quit()
+try:
+    driver.quit()
+except:
+    pass

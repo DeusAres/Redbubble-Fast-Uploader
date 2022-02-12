@@ -13,3 +13,7 @@ test/prod.py
 test/startTest.py
 __pycache__/redbubbleTest.cpython-39.pyc
 __pycache__/sitedata.cpython-39.pyc
+test/testGui.py
+testGui.py
+squared.png
+.gitignore
