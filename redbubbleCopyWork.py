@@ -45,7 +45,7 @@ class bot:
         sleep(uniform(5, 10))
         self.driver.find_element(By.XPATH, "//button[@class='app-ui-components-Button-Button_button_1_MpP app-ui-components-Button-Button_primary_pyjm6 app-ui-components-Button-Button_padded_1fH5b']").click()
         sleep(10)
-        if self.driver.current_url == "https://www.redbubble.com/explore/for-you/#":
+        if self.driver.current_url in "https://www.redbubble.com/explore/for-you/#":
             self.logged=True
         else:
             self.logged=False
@@ -134,7 +134,7 @@ class bot:
             each()
 
         i = 0 
-        while 'portfolio' in self.driver.current_url():
+        while 'portfolio' in self.driver.current_url:
             if i >= 0:
                 playsound('kaching.mp3')
             sleep(10)
