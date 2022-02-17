@@ -77,3 +77,4 @@ site = {
     "rights" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/section[2]/div[3]/input[1]",
     "saveWork" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/section[2]/div[4]/div[1]/input[1]"
 }
+

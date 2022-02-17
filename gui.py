@@ -8,6 +8,7 @@ from io import BytesIO
 from random import uniform
 from time import sleep
 from pathlib import Path
+from playsound import playsound
 
 import PySimpleGUI as sg
 from PIL import Image
@@ -125,8 +126,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
             os.mkdir(completed)
 
         os.rename(file, completed / (Path(file).name))
-
-        
+ 
     # TREADING THE PREVIEW LOADING
     def threadPreview():
         try:
@@ -204,6 +204,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                     window["SPR"].Update(disabled=True)
                 window["STOP"].Update(disabled=True)
                 window.refresh()
+                playsound("ka-ching.mp3")
                 sys.exit()
 
             # Must admit, if gui buttons are spammed to much between 
@@ -212,6 +213,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 #window["SPR"].Update('You are doing something terrible')
                 print(traceback.format_exc())
                 window["STOP"].Update(disabled=True)
+                window.refresh()
+                playsound("ka-ching.mp3")
                 sys.exit()
 
     while True:
@@ -313,7 +316,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 # Auto-select a entry of listbox (previous one of added/removed)
                 # Updating preview too
                 pIndex = toPop[0]-1
-                pIndex = pIndex if pIndex == 0 else pIndex-1
+                pIndex = 0 if pIndex-1 <=0 else pIndex-1
                 window["LIST"].Update(
                     [each.file for each in listboxFiles], set_to_index=pIndex
                 )

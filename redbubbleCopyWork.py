@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 
 import drawerFunctions as df
 import sitedata
+from playsound import playsound
 
 
 class bot:
@@ -59,46 +60,46 @@ class bot:
 
         self.get_site = [
             lambda : self.driver.get(sitedata.site['portfolio']),
-            lambda : sleep(3),
+            lambda : sleep(5),
             lambda : find('settings').click(),
-            lambda : sleep(1),
+            lambda : sleep(3),
             lambda : find('copySettings').click(),
             lambda : sleep(5),
         ]
         
         self.fill_entries = [
             lambda : find('replaceImage').send_keys(file.images['normal']),
-            lambda : sleep(10),
+            lambda : sleep(uniform(10, 20)),
             lambda : find('openColor').click(),
             lambda : sleep(uniform(2, 5)),
             lambda : find('sendColor').clear(),
             lambda : sleep(uniform(2, 5)),
             lambda : find('sendColor').send_keys(file.background),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('title').clear(),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('title').send_keys(file.title),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('tags').clear(),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('tags').send_keys(file.tags),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('desc').clear(),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
             lambda : find('desc').send_keys(file.desc),
-            lambda : sleep(2),
+            lambda : sleep(uniform(2, 5)),
         ]
 
         self.modify = [
             lambda x: find2(x).click(),
-            lambda : sleep(uniform(2, 7)),
+            lambda : sleep(uniform(3, 5)),
             lambda x, y: find2(x).send_keys(y),
-            lambda : sleep(uniform(2, 7)),
+            lambda : sleep(uniform(5, 9)),
         ]
 
         self.complete = [
             lambda : find('rights').click(),
-            lambda : sleep(5),
+            lambda : sleep(uniform(20, 30)),
             lambda : find('saveWork').click()
         ]
      
@@ -132,6 +133,16 @@ class bot:
             wait()
             each()
 
+        i = 0 
+        while 'portfolio' in self.driver.current_url():
+            if i >= 0:
+                playsound('kaching.mp3')
+            sleep(10)
+            i += 1
+            
+
+        
+
     def copy(self, file, prods):
 
         self.listCommands(file)
@@ -152,6 +163,30 @@ class bot:
         for each in self.complete:
             each()
 
+    def pin(self, file):
+        # TODO PASS BOARD AND SECTION IN LIST
+
+        image2 = df.openImage(file.images['normal'])[0]
+        image = df.backgroundPNG(1000, 1500, file.background)
+        image = df.resizeToFit(image, 1000-50)
+        image = df.pasteItem(image2, image, *df.centerItem(image2, image)).convert('RGB')
+        path = os.getcwd() + "\\" + "pin.jpg"
+        image.save(path, optimize=True)
+        image = path
+
+        link = self.driver.current_url
+        # TODO parse link for ap page
+
+        self.pinBot.pin(
+            image,
+            #board,
+            #section,
+            file.title,
+            file.tags,
+            link,
+            True
+            )
+        
 class file:
     def __init__(self, image, title, tags, desc, types, background):
         self.title = title
