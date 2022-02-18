@@ -76,6 +76,7 @@ class bot:
             pass
         
     def pinPage(self):
+        self.driver.switch_to.window(self.driver.window_handles[1])
         self.driver.get(pin_builder)
         
     def pin(self, image, board, 

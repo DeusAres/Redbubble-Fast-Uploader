@@ -182,7 +182,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 updateStatus("Working")
 
                 # Send data to selenium to upload the new copy with pause and stop objects
-                file = rcw.file(*queue[_index.s][:-2])
+                file = fileObj(*queue[_index.s][:-2])
                 driver.copy_thread(file, queue[_index.s][-2], status, _stop)
                 moveToCompleted(queue[_index.s][0])
 
