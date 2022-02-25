@@ -9,8 +9,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
     # WHERE CONST DATA END
     constant = [
         [
-            sg.Column(
-                [
+            sg.Column([
                     [sg.Input(enable_events=True, key='IMPORTTEXT', visible=False), 
                     sg.FileBrowse('Import settings', file_types=(('JSON', '.json'),), target='IMPORTTEXT'),
                     sg.Input(enable_events=True, key='EXPORTTEXT', visible=False), 
@@ -18,11 +17,12 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     [sg.Text("Title"), sg.Push(), sg.Multiline(ctitle, key="CTITLE")],
                     [sg.Text("Tags"), sg.Push(), sg.Multiline(ctags, key="CTAGS")],
                     [sg.Text("Description"), sg.Push(), sg.Multiline(cdesc, key="CDESC")],
-                    
-                    [sg.Input('#000000', key='CCOLOR'), sg.ColorChooserButton("Color", target='CCOLOR')],
-                
-                ]
-            )
+                    [sg.Text("Background"), sg.Push(), sg.Input('#000000', size=(40, 1), key='CCOLOR'), sg.ColorChooserButton("Color", target='CCOLOR')],
+                    [sg.HorizontalSeparator()],
+                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No'], 'No', key='CPIN')],
+                    [sg.Text("Board"), sg.Push(), sg.Input(key='CBOARD')],
+                    [sg.Text("Section"), sg.Push(), sg.Input(key='CSECTION')]
+            ])
         ]
     ]
 
@@ -31,10 +31,15 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
         [
             sg.Column(
                 [
+                    [sg.Text('')],
                     [sg.Text("Title"), sg.Push(), sg.Multiline(vtitle, key="VTITLE")],
                     [sg.Text("Tags"), sg.Push(), sg.Multiline(vtags, key="VTAGS")],
                     [sg.Text("Description"), sg.Push(), sg.Multiline(vdesc, key="VDESC")],
-                    [sg.Input('#000000', key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
+                    [sg.Text("Background"), sg.Input('#000000', size=(40, 1), key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
+                    [sg.HorizontalSeparator()],
+                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No', 'Use Constant'], 'Use Constant', key='VPIN')],
+                    [sg.Text("Board"), sg.Push(), sg.Input(key='VBOARD')],
+                    [sg.Text("Section"), sg.Push(), sg.Input(key='VSECTION')]
                 ]
             )
         ]
@@ -42,7 +47,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
 
     # NEEDED FOR FILE VARIATIONS
     listbox = ['rotated', 'sticker', 'rotatedSticker', 'squared']
-    # PRODUCTS VARIATIONS ANS IMPORT/EXPORT
+    # PRODUCTS VARIATIONS AND IMPORT/EXPORT
     products = [
         [   
             sg.Column([
@@ -72,7 +77,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                         sg.Tab("Variable", variable),
                         sg.Tab('Products', products)
                     ]
-                ], size=(550, 300))],
+                ], size=(550, 350))],
             ]),
 
             # LIST OF FILE
@@ -122,7 +127,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                 ],  
                 def_col_width=1000,
                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                headings=["File", "Title", "Tags", "Description", "Types", "Background", "Products", "Status"],
+                headings=["File", "Title", "Tags", "Description", "Background", "Types", "Products", "Status"],
                 display_row_numbers=True,
                 justification="center",
                 p=((0, 0), (20, 0)),

@@ -1,12 +1,11 @@
-import os
 from random import uniform
 from time import sleep
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-import drawerFunctions as df
 import sitedata
 from playsound import playsound
 
@@ -30,7 +29,7 @@ class bot:
         self.driver.get(sitedata.site['redbubble'])
         if (self.driver.current_url == sitedata.site['homepage1'] or
             self.driver.current_url == sitedata.site['homepage2'] ):
-            self.logged = True
+            self.redbubbleLogged = True
             return
 
         else:
@@ -46,9 +45,9 @@ class bot:
         self.driver.find_element(By.XPATH, "//button[@class='app-ui-components-Button-Button_button_1_MpP app-ui-components-Button-Button_primary_pyjm6 app-ui-components-Button-Button_padded_1fH5b']").click()
         sleep(10)
         if self.driver.current_url in "https://www.redbubble.com/explore/for-you/#":
-            self.logged=True
+            self.redbubbleLogged = True
         else:
-            self.logged=False
+            self.redbubbleLogged = False
             raise Exception
             
     def quit(self):
@@ -103,7 +102,7 @@ class bot:
             lambda : find('saveWork').click()
         ]
      
-    def copy_thread(self, file, prods, status, _stop):
+    def copy_thread(self, file, status, _stop):
         def wait():
             status.wait()
             _stop.wait()
@@ -118,14 +117,16 @@ class bot:
             wait()
             each()
 
-        for each in prods.keys():
-            if prods[each]['enabled']:
+        file.makeVariations()
+
+        for each in file.products.keys():
+            if file.products[each]['enabled']:
                 wait()
                 self.modify[0](sitedata.products[each][0])
                 wait()
                 self.modify[1]()
                 wait()
-                self.modify[2](sitedata.products[each][1], file.images[prods[each]['type']])
+                self.modify[2](sitedata.products[each][1], file.images[file.products[each]['type']])
                 wait()
                 self.modify[3]()
         
@@ -139,43 +140,107 @@ class bot:
                 playsound('ka-ching.mp3')
             sleep(10)
             i += 1
-            
-    def copy(self, file, prods):
+    
+    def pinLoginCookie(self, username, password):
+        #self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.COMMAND + 't') 
+        self.driver.execute_script("window.open('{}');".format(sitedata.pinData['pin_builder']))
 
-        self.listCommands(file)
-        
-        for each in self.get_site:
-            each()
-
-        for each in self.fill_entries:
-            each()
-
-        for each in prods.keys():
-            if prods[each]['enabled']:
-                self.modify[0](sitedata.products[each][0])
-                self.modify[1]()
-                self.modify[2](sitedata.products[each][1], file.images[prods[each]['type']])
-                self.modify[3]()
-        
-        for each in self.complete:
-            each()
-
-    def pin(self, board, section, file):
-        # TODO PASS BOARD AND SECTION IN LIST
+        self.driver.get(sitedata.pinData['pin_builder'])
+        if self.driver.current_url == sitedata.pinData['pinterest_home']:
+            self.pinterestLogged = False
+            self.pinLogin(username, password)
+        else:
+            self.pinterestLogged = True
 
 
-        file.makePin()
+    def pinLogin(self, username, password):
+        # Click log in link
+        self.driver.find_element(By.XPATH, sitedata.pinData['pre_login_button']).click()
+        # Log in
+        try:
+            # In case username is logged without password
+            self.driver.find_element(By.NAME, "id").send_keys(username)
+            sleep(uniform(2, 6))
+        except:
+            pass
+
+        self.driver.find_element(By.NAME, "password").send_keys(password)
+        sleep(uniform(2, 6))
+        self.driver.find_element(By.XPATH, sitedata.pinData['login_button']).click()
+        sleep(uniform(2, 6))
+
+        # Checking if login has been successful
+        self.driver.get(sitedata.pinData['pin_builder'])
+        if self.driver.current_url == sitedata.pinData['pin_builder']:
+            self.logged = True
+            return
+        else:
+            raise Exception
+
+    def pin(self, file):
         link = self.driver.current_url
-        # TODO parse link for ap page
-
-        self.pinBot.pin(
-            file.social,
-            #board,
-            #section,
-            file.title,
-            file.tags,
-            link,
-            True
-            )
+        link = self.makeLink(link)
+        publish = True
+        if len(self.driver.window_handles) == 1:
+            self.pinLoginCookie(None, None)
+        self.driver.switch_to.window(self.driver.window_handles[1])
+        file.makePin()
         
+        # TODO parse link for ap page        
+        sleep(uniform(2, 6))
 
+        # Upload image
+        self.driver.find_element(By.XPATH, sitedata.pinData["image_input"]).send_keys(file.social)
+        sleep(uniform(2, 6))
+
+        # Enter pin name
+        if file.title:
+            self.driver.find_element(By.XPATH, sitedata.pinData["pin_name"]).send_keys(file.title)
+            sleep(uniform(2, 6))
+
+        # Enter description
+        if file.desc:
+            self.driver.find_element(By.XPATH, sitedata.pinData["pin_description"]).send_keys(file.desc)
+            sleep(uniform(2, 6))
+
+        # Enter link
+        if link:
+            self.driver.find_element(By.XPATH, sitedata.pinData["pin_link"]).send_keys(link)
+            sleep(uniform(2, 6))
+
+        # Open board drop-down menu
+        self.driver.find_element(By.XPATH, sitedata.pinData["drop_down_menu"]).click()
+        sleep(uniform(2, 6))
+
+        # Select board
+        board = "//div[@data-test-id='board-row-" + file.board + "']"
+        self.driver.find_element(By.XPATH, board).click()
+        sleep(uniform(2, 6))
+
+        if section:
+            section = "//div[@data-test-id='section-row-" + file.section + "']"
+            self.driver.find_element(By.XPATH, board).click()
+            sleep(uniform(2, 6))
+
+        if publish:
+            # Click publish button
+            self.driver.find_element(By.XPATH, sitedata.pinData["publish_button"]).click()
+            sleep(uniform(7, 15))
+            # Go pin builder page
+            self.driver.get(sitedata.pinData["pin_builder"])
+                    
+        else:
+            # Create new pin to publish
+            self.driver.find_element(By.XPATH, sitedata.pinData["new_pin"]).click()
+        
+        self.driver.switch_to.window(self.driver.window_handles[0])
+
+
+    def makeLink(self, link):
+        if link.rfind('?') != -1:
+            number = link[link.rfind("/")+1:link.rfind('?')]
+        else:
+            number = link[link.rfind("/")+1:]
+
+        link = "https://www.redbubble.com/shop/ap/" + number + "?asc=u"
+        return link

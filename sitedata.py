@@ -78,3 +78,18 @@ site = {
     "saveWork" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/section[2]/div[4]/div[1]/input[1]"
 }
 
+
+pinData = {
+    "pinterest_home" : "https://www.pinterest.com/",
+    "pre_login_button" : ('//*[@id="__PWS_ROOT__"]/div[1]/div/div/div/div[1]/div[1]/div[2]/div[2]/button'),
+    "login_button" : "//button[@type='submit']",
+    "pin_builder" : "https://www.pinterest.com/pin-builder/",
+    "pin_name" : "//*[starts-with(@id, 'pin-draft-title-')]",
+    "pin_description" : ("//*[starts-with(@id, 'pin-draft-description-')]/div/div/div/div/div/div/div"),
+    "image_input" : "//*[starts-with(@id, 'media-upload-input-')]",
+    "pin_link" : "//*[starts-with(@id, 'pin-draft-link-')]",
+    "drop_down_menu" : "//button[@data-test-id='board-dropdown-select-button']",
+    "publish_button" : "//button[@data-test-id='board-dropdown-save-button']",
+    "new_pin" : "//*[starts-with(@style, 'background-color: rgb(255, 255, 255); border: 0px; border-radius: 8px; box-sizing: border-box; cursor: pointer; height: 60px; outline: none; padding: 0px; width: 40px;')]",
+    "return_pin_builder" : "//*[starts-with(@class, 'JJV MIw Rym QLY p6V ojN Cii kOw Smz')]",
+}

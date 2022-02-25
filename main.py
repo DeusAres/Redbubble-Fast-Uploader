@@ -1,6 +1,7 @@
 import gui
+import redbubbleCopyWork as rcw
 
-driver = gui.login()
+driver = rcw.bot(None, None)
 
 gui.work(driver=driver)
 
