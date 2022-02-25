@@ -166,8 +166,8 @@ class entry:
             
     def makePin(self):
         image2 = df.openImage(self.images['normal'])[0]
-        image = df.backgroundPNG(1000, 1500, self.background)
-        image = df.resizeToFitSpace(image2, [each*0.95 for each in image.size])
+        image = df.backgroundPNG(1000, 1500, self.background)[0]
+        image = df.resizeToFitSpace(image2, [each*0.95 for each in image.size])[0]
         image = df.pasteItem(image2, image, *df.centerItem(image2, image)).convert('RGB')
         path = os.getcwd() + "\\" + "pin.jpg"
         image.save(path, optimize=True)

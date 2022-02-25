@@ -145,7 +145,7 @@ class bot:
         #self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.COMMAND + 't') 
         self.driver.execute_script("window.open('{}');".format(sitedata.pinData['pin_builder']))
 
-        self.driver.get(sitedata.pinData['pin_builder'])
+        #self.driver.get(sitedata.pinData['pin_builder'])
         if self.driver.current_url == sitedata.pinData['pinterest_home']:
             self.pinterestLogged = False
             self.pinLogin(username, password)
@@ -183,7 +183,8 @@ class bot:
         publish = True
         if len(self.driver.window_handles) == 1:
             self.pinLoginCookie(None, None)
-        self.driver.switch_to.window(self.driver.window_handles[1])
+        else:
+            self.driver.switch_to.window(self.driver.window_handles[1])
         file.makePin()
         
         # TODO parse link for ap page        
@@ -233,6 +234,7 @@ class bot:
             # Create new pin to publish
             self.driver.find_element(By.XPATH, sitedata.pinData["new_pin"]).click()
         
+        # Back to redbubble tab
         self.driver.switch_to.window(self.driver.window_handles[0])
 
 
