@@ -142,10 +142,8 @@ class bot:
             i += 1
     
     def pinLoginCookie(self, username, password):
-        #self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.COMMAND + 't') 
         self.driver.execute_script("window.open('{}');".format(sitedata.pinData['pin_builder']))
 
-        #self.driver.get(sitedata.pinData['pin_builder'])
         if self.driver.current_url == sitedata.pinData['pinterest_home']:
             self.pinterestLogged = False
             self.pinLogin(username, password)
@@ -180,11 +178,11 @@ class bot:
     def pin(self, file):
         link = self.driver.current_url
         link = self.makeLink(link)
-        publish = True
+        publish = False
         if len(self.driver.window_handles) == 1:
             self.pinLoginCookie(None, None)
-        else:
-            self.driver.switch_to.window(self.driver.window_handles[1])
+        
+        self.driver.switch_to.window(self.driver.window_handles[1])
         file.makePin()
         
         # TODO parse link for ap page        
@@ -218,13 +216,21 @@ class bot:
         self.driver.find_element(By.XPATH, board).click()
         sleep(uniform(2, 6))
 
-        if section:
+        if file.section:
             section = "//div[@data-test-id='section-row-" + file.section + "']"
-            self.driver.find_element(By.XPATH, board).click()
+            self.driver.find_element(By.XPATH, section).click()
             sleep(uniform(2, 6))
 
+        elif file.section is None:
+            # If section is not defined but the board is divided by section
+            try:
+                self.driver.find_element(By.XPATH, sitedata.pinData["section_not_defined"]).click()
+                sleep(uniform(2, 6))
+            except:
+                pass
+            
         if publish:
-            # Click publish button
+            # Click publish 
             self.driver.find_element(By.XPATH, sitedata.pinData["publish_button"]).click()
             sleep(uniform(7, 15))
             # Go pin builder page

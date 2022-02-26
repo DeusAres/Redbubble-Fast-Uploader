@@ -65,8 +65,6 @@ class queue:
         self.currentIndex += 1
         if self.currentIndex >= self.maxIndex:
             raise Exit("All clear")
-        else:
-            self.entries.file.makeVariations()
         
     def updateStatus(self, status):
         self.entries[self.currentIndex].updateStatus(status)
@@ -165,12 +163,12 @@ class entry:
                     temp2.save(f'{path}\\{each}.png', optimize=True)
             
     def makePin(self):
-        image2 = df.openImage(self.images['normal'])[0]
-        image = df.backgroundPNG(1000, 1500, self.background)[0]
-        image = df.resizeToFitSpace(image2, [each*0.95 for each in image.size])[0]
-        image = df.pasteItem(image2, image, *df.centerItem(image2, image)).convert('RGB')
+        image = df.openImage(self.images['normal'])[0]
+        background = df.backgroundPNG(1000, 1500, self.background)[0]
+        image = df.resizeToFitSpace(image, [each*0.95 for each in background.size])[0]
+        background = df.pasteItem(background, image, *df.centerItem(background, image)).convert('RGB')
         path = os.getcwd() + "\\" + "pin.jpg"
-        image.save(path, optimize=True)
+        background.save(path, optimize=True)
         self.social = path
 
     def delete(self):

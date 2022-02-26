@@ -324,5 +324,5 @@ def moveToCompleted(file):
     if not os.path.exists(completed):
         os.mkdir(completed)
 
-    os.rename(file, completed / (Path(file).name))
+    os.rename(file.file, completed / (Path(file.file).name))
  
