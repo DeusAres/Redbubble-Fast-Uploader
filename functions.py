@@ -212,7 +212,7 @@ def pinOverride(values):
     elif values['VPIN'] == 'No':
         return False
     
-    elif values['VPIN'] == 'Use Constant':
+    elif values['VPIN'] == 'Use Fixed':
         if values['CPIN'] == 'Yes':
             board = values['CBOARD'].strip('\n').strip(' ')
             section = values['CSECTION'].strip('\n').strip(' ')
@@ -292,12 +292,22 @@ def exportConstantText(file, values):
 
     return None
     """
+    inputs = ['CTITLE', 'CDESC', 'CTAGS', 'CCOLOR', 'CPIN', 'CBOARD', 'CSECTION']
+
+    textDict = {}
+    for each in inputs:
+        textDict[each] = values[each]
+
+    """
     textDict = {
         "CTITLE" : values['CTITLE'],
         "CDESC" : values['CDESC'],
         "CTAGS" : values['CTAGS'],
         "CCOLOR" : values['CCOLOR'],
+        "CPIN" : values['CPIN']
     }
+    """
+
     with open(file, 'w') as out:
         json.dump(textDict, out)
     del textDict

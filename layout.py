@@ -37,7 +37,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     [sg.Text("Description"), sg.Push(), sg.Multiline(vdesc, key="VDESC")],
                     [sg.Text("Background"), sg.Input('#000000', size=(40, 1), key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
                     [sg.HorizontalSeparator()],
-                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No', 'Use Constant'], 'Use Constant', key='VPIN')],
+                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No', 'Use Fixed'], 'Use Fixed', key='VPIN')],
                     [sg.Text("Board"), sg.Push(), sg.Input(key='VBOARD')],
                     [sg.Text("Section"), sg.Push(), sg.Input(key='VSECTION')]
                 ]
