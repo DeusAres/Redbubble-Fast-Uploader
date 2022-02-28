@@ -49,8 +49,17 @@ class queue:
             self.currentIndex -= 1
 
     def popMultiple(self, indexes):
+        self.entries = [self.entries[i] 
+            for i in range(len(self.entries))
+            if i not in indexes
+        ]
+        
         for i in indexes:
-            self.pop(i)
+            if self.currentIndex >= i:
+                self.currentIndex -= 1
+
+        self.maxIndex -= self.len()
+
 
     def getCurrentFile(self):
         return self.entries[self.currentIndex]

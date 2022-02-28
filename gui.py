@@ -236,14 +236,12 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                         sleep(1)
 
                     f.clearVariable(window)
-                    
-                        
+                           
             # REMOVING
             elif event == 'Remove':
                 # Different from adding because it's possible
                 # to remove multiple files from listbox
                 queuePreview.popMultiple(window['LIST'].get_indexes())
-
 
             # ADDING AND REMOVING (BOTH LEAD TO SAME EFFECT)
             # Auto-select a entry of listbox
