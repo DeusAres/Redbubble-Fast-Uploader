@@ -158,7 +158,7 @@ class bot:
         i = 0 
         while 'portfolio' in self.driver.current_url:
             if i > 0:
-                playsound('ka-ching.mp3')
+                playsound('./sounds/ka-ching.mp3')
             sleep(10)
             i += 1
     

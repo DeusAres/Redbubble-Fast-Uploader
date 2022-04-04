@@ -161,7 +161,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 300)
                 window["STOP"].Update(disabled=True)
                 window.refresh()
-                playsound("ka-ching.mp3")
+                playsound("./sounds/ka-ching.mp3")
                 sys.exit()
 
             # Must admit, if gui buttons are spammed to much between 
@@ -172,7 +172,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 window["SPR"].Update(disabled=True)
                 window["STOP"].Update(disabled=True)
                 window.refresh()
-                playsound("ka-ching.mp3")
+                playsound("./sounds/ka-ching.mp3")
                 sys.exit()
 
 
