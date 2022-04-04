@@ -1,4 +1,4 @@
-import drawerFunctions as df
+import funPIL as df
 import os
 from pathlib import Path
 
@@ -60,9 +60,30 @@ class queue:
 
         self.maxIndex -= self.len()
 
+    def getStatus(self):
+        if self.maxIndex == 0:
+            return 'empty'
+
+        elif self.currentIndex >= self.maxIndex:
+            return 'cleared'
+        else:
+            return 'pending'
 
     def getCurrentFile(self):
-        return self.entries[self.currentIndex]
+        if self.len() != 0:
+            return self.entries[self.currentIndex]
+        else:
+            return False
+
+    def getCurrentIndex(self):
+        return self.currentIndex
+
+    def getPending(self):
+        newQueue = queue()
+        newQueue.entries = [each for each in self.entries if each.status == 'Pending']
+        newQueue.maxIndex = newQueue.len()
+        return newQueue
+
 
     def __getitem__(self, key):
         return self.entries[key]
@@ -100,12 +121,13 @@ class entry:
         self.preview = preview
         self.xy = xy
 
-    def addData(self, title, tags, desc, types, background, products):
+    def addData(self, title, tags, desc, types, background, products, copyFrom):
         self.title = title
         self.tags = tags
         self.desc = desc
         self.background = background
         self.products = products
+        self.copyFrom = copyFrom
 
         self.images = {
             'normal' : self.file,
@@ -120,8 +142,9 @@ class entry:
 
         self.status = 'Pending'
 
-    def addPin(self, board, section):
+    def addPin(self, pattern, board, section):
         self.pin = True
+        self.pattern = pattern
         self.board = board
         self.section = section
 
@@ -138,7 +161,7 @@ class entry:
                         self.tags,
                         self.desc,
                         self.background,
-                        list(self.images.keys()),
+                        [each for each in self.images.keys() if self.images[each] is not None],
                         self.products,
                         self.status
                     ]
@@ -172,12 +195,19 @@ class entry:
                     temp2.save(f'{path}\\{each}.png', optimize=True)
             
     def makePin(self):
-        image = df.openImage(self.images['normal'])[0]
+        image = df.openImage(self.images['normal'])[0].convert('RGBA')
+        image = df.cropToRealSize(image)[0]
         background = df.backgroundPNG(1000, 1500, self.background)[0]
-        image = df.resizeToFitSpace(image, [each*0.95 for each in background.size])[0]
-        background = df.pasteItem(background, image, *df.centerItem(background, image)).convert('RGB')
+        if self.pattern == False:
+            image = df.resizeToFitSpace(image, [each*0.95 for each in background.size])[0]
+            background = df.pasteItem(background, image, *df.centerItem(background, image)).convert('RGB')
+        if self.pattern:
+            image = df.resizeToFit(image, 500)[0]
+            background = df.spreadPattern(background, image)
+            
+            
         path = os.getcwd() + "\\" + "pin.jpg"
-        background.save(path, optimize=True)
+        background.convert("RGB").save(path, optimize=True)
         self.social = path
 
     def delete(self):

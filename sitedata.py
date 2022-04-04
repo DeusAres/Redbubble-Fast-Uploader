@@ -65,6 +65,7 @@ site = {
     "homepage1" : "https://www.redbubble.com/explore/for-you/",
     "homepage2" : "https://www.redbubble.com/explore/for-you/#",
     "login" : "https://www.redbubble.com/auth/login",
+    "copyFrom" : "/html[1]/body[1]/div[1]/div[4]/div[2]/section[1]/div[3]/form[1]/input[2]",
     "portfolio" : "https://www.redbubble.com/portfolio/manage_works?ref=account-nav-dropdown",
     "settings" : "/html[1]/body[1]/div[1]/div[4]/div[2]/section[1]/div[6]/div[1]/div[1]/div[1]",
     "copySettings" : "/html[1]/body[1]/div[1]/div[4]/div[2]/section[1]/div[6]/div[1]/div[1]/div[2]/a[3]",
@@ -72,7 +73,8 @@ site = {
     "tags" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[2]/textarea[1]",
     "desc" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/textarea[1]",
     "replaceImage" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[1]/div[3]/input[1]",
-    "openColor" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[1]/div[4]/div[1]",
+    'openColor' : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[1]/div[4]/div[1]/div[1]/div[1]",
+    #"openColor" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/div[1]/div[1]/div[4]/div[1]",
     "sendColor" : "/html[1]/body[1]/div[41]/div[2]/div[2]/input[1]",
     "rights" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/section[2]/div[3]/input[1]",
     "saveWork" : "/html[1]/body[1]/div[1]/div[5]/div[2]/form[1]/section[2]/div[4]/div[1]/input[1]"

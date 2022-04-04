@@ -1,8 +1,7 @@
 import os
 import json
 from classes import *
-import traceback
-
+import shelve
 
 # =====================================================
 # ██╗   ██╗██████╗ ██████╗  █████╗ ████████╗███████╗
@@ -70,6 +69,11 @@ def clearVariable(window):
     window['VDESC'].Update('')
     window['VTAGS'].Update('')
     window['VCOLOR'].Update('')
+    window['VCOPY'].Update('')
+    window['VPIN'].Update('Use Fixed')
+    window['VPATTERN'].Update(False)
+    window['VBOARD'].Update('')
+    window['VSECTION'].Update('')
 
 def updateStatus(window, queueUpload, message):
     """
@@ -141,8 +145,11 @@ def parseStringsForUpload(values):
         return values[data].strip("\n").strip(" ").strip(",")
 
     title = stripChar(values, "CTITLE").replace("@text", stripChar(values, "VTITLE"))
-    tags = stripChar(values, "CTAGS") + ", " + stripChar(values, "VTAGS")
-    tags = tags.strip(',')
+    #tags = stripChar(values, "CTAGS") + ", " + stripChar(values, "VTAGS")
+    tagsText, tagsTags = values["VTAGS"].split('\n')
+
+    tags = stripChar(values, "CTAGS").replace("@text", tagsText.strip('\n')).replace("@tags", tagsTags.strip('\n'))
+    #tags = tags.strip(',')
     desc = stripChar(values, "CDESC").replace("@text", stripChar(values, "VDESC"))
     return title, tags, desc
 
@@ -175,7 +182,7 @@ def parseType(prod_data):
 
     return list of variations (str)
     """
-    types = [each['type'] for each in prod_data.values() if each['enabled']]
+    types = [each['type'] for each in prod_data.values() if each['enabled'] == True]
     return list(dict.fromkeys(types))
 
 def colorOverride(values):
@@ -203,24 +210,32 @@ def pinOverride(values):
     return False or (board, section)
     """
     if values['VPIN'] == 'Yes':
+        pattern = values['VPATTERN']
         board = values['VBOARD'].strip('\n').strip(' ')
         section = values['VSECTION'].strip('\n').strip(' ')
         if section in ['None', '']:
             section = None
-        return board, section
+        return pattern, board, section
 
     elif values['VPIN'] == 'No':
         return False
     
     elif values['VPIN'] == 'Use Fixed':
         if values['CPIN'] == 'Yes':
+            pattern = values['CPATTERN']
             board = values['CBOARD'].strip('\n').strip(' ')
             section = values['CSECTION'].strip('\n').strip(' ')
             if section in ['None', '']:
                 section = None
-            return board, section
+            return pattern, board, section
         elif values['CPIN'] == 'No':
             return False
+
+def copyOverride(values):
+    if values['VCOPY'] != '':
+        return values['VCOPY']
+    else:
+        return values['CCOPY']
 
 
 # =====================================================
@@ -292,7 +307,7 @@ def exportConstantText(file, values):
 
     return None
     """
-    inputs = ['CTITLE', 'CDESC', 'CTAGS', 'CCOLOR', 'CPIN', 'CBOARD', 'CSECTION']
+    inputs = ['CTITLE', 'CDESC', 'CTAGS', 'CCOLOR', 'CPIN', 'CPATTERN', 'CBOARD', 'CSECTION']
 
     textDict = {}
     for each in inputs:
@@ -311,6 +326,19 @@ def exportConstantText(file, values):
     with open(file, 'w') as out:
         json.dump(textDict, out)
     del textDict
+
+def importQueue(file):
+    for each in [".bak", ".dat", ".dir"]:
+        file = file.replace(each, '') 
+    with shelve.open(file, 'r') as queue:
+        return queue['queue']
+
+def exportQueue(queue, file):
+    queue = queue.getPending()
+
+    with shelve.open(file, 'n') as shelf:
+        shelf['queue'] = queue
+
 
 # =====================================================
 # ███╗   ███╗██╗███████╗ ██████╗

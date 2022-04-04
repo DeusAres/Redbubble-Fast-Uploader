@@ -1,5 +1,4 @@
 import PySimpleGUI as sg
-import redbubbleCopyWork as rcw
 import sitedata
 
 GSIZE = 300
@@ -10,18 +9,20 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
     constant = [
         [
             sg.Column([
-                    [sg.Input(enable_events=True, key='IMPORTTEXT', visible=False), 
-                    sg.FileBrowse('Import settings', file_types=(('JSON', '.json'),), target='IMPORTTEXT'),
-                    sg.Input(enable_events=True, key='EXPORTTEXT', visible=False), 
-                    sg.FileSaveAs('Export settings', file_types=(('JSON', '.json'),), target='EXPORTTEXT')],
-                    [sg.Text("Title"), sg.Push(), sg.Multiline(ctitle, key="CTITLE")],
-                    [sg.Text("Tags"), sg.Push(), sg.Multiline(ctags, key="CTAGS")],
-                    [sg.Text("Description"), sg.Push(), sg.Multiline(cdesc, key="CDESC")],
-                    [sg.Text("Background"), sg.Push(), sg.Input('#000000', size=(40, 1), key='CCOLOR'), sg.ColorChooserButton("Color", target='CCOLOR')],
-                    [sg.HorizontalSeparator()],
-                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No'], 'No', key='CPIN')],
-                    [sg.Text("Board"), sg.Push(), sg.Input(key='CBOARD')],
-                    [sg.Text("Section"), sg.Push(), sg.Input(key='CSECTION')]
+                [sg.Input(enable_events=True, key='IMPORTTEXT', visible=False), 
+                sg.FileBrowse('Import settings', file_types=(('JSON', '.json'),), target='IMPORTTEXT'),
+                sg.Input(enable_events=True, key='EXPORTTEXT', visible=False), 
+                sg.FileSaveAs('Export settings', file_types=(('JSON', '.json'),), target='EXPORTTEXT')],
+                [sg.Text("Title"), sg.Push(), sg.Multiline(ctitle, key="CTITLE")],
+                [sg.Text("Tags"), sg.Push(), sg.Multiline(ctags, key="CTAGS")],
+                [sg.Text("Description"), sg.Push(), sg.Multiline(cdesc, key="CDESC")],
+                [sg.Text("Copy from"), sg.Push(), sg.Input('', key='CCOPY')],
+                [sg.Text("Background"), sg.Push(), sg.Input('#000000', size=(40, 1), key='CCOLOR'), sg.ColorChooserButton("Color", target='CCOLOR')],
+                [sg.HorizontalSeparator()],
+                [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No'], 'No', key='CPIN')],
+                [sg.Checkbox('Pattern', key='CPATTERN')],
+                [sg.Text("Board"), sg.Push(), sg.Input(key='CBOARD')],
+                [sg.Text("Section"), sg.Push(), sg.Input(key='CSECTION')]
             ])
         ]
     ]
@@ -29,19 +30,19 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
     # WHERE VARIABLED DATA END
     variable = [
         [
-            sg.Column(
-                [
-                    [sg.Text('')],
-                    [sg.Text("Title"), sg.Push(), sg.Multiline(vtitle, key="VTITLE")],
-                    [sg.Text("Tags"), sg.Push(), sg.Multiline(vtags, key="VTAGS")],
-                    [sg.Text("Description"), sg.Push(), sg.Multiline(vdesc, key="VDESC")],
-                    [sg.Text("Background"), sg.Input('#000000', size=(40, 1), key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
-                    [sg.HorizontalSeparator()],
-                    [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No', 'Use Fixed'], 'Use Fixed', key='VPIN')],
-                    [sg.Text("Board"), sg.Push(), sg.Input(key='VBOARD')],
-                    [sg.Text("Section"), sg.Push(), sg.Input(key='VSECTION')]
-                ]
-            )
+            sg.Column([
+                [sg.Text('')],
+                [sg.Text("Title"), sg.Push(), sg.Multiline(vtitle, key="VTITLE")],
+                [sg.Text("Tags"), sg.Push(), sg.Multiline(vtags, key="VTAGS")],
+                [sg.Text("Description"), sg.Push(), sg.Multiline(vdesc, key="VDESC")],
+                [sg.Text("Copy from"), sg.Push(), sg.Input('', key='VCOPY')],
+                [sg.Text("Background"), sg.Input('', size=(40, 1), key='VCOLOR'), sg.ColorChooserButton("Color", target='VCOLOR')],
+                [sg.HorizontalSeparator()],
+                [sg.Text("Pin"), sg.Push(), sg.Combo(['Yes', 'No', 'Use Fixed'], 'Use Fixed', key='VPIN')],
+                [sg.Checkbox('Pattern', key='VPATTERN')],
+                [sg.Text("Board"), sg.Push(), sg.Input(key='VBOARD')],
+                [sg.Text("Section"), sg.Push(), sg.Input(key='VSECTION')]
+            ])
         ]
     ]
 
@@ -77,7 +78,7 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                         sg.Tab("Variable", variable),
                         sg.Tab('Products', products)
                     ]
-                ], size=(550, 350))],
+                ], size=(550, 380))],
             ]),
 
             # LIST OF FILE
@@ -126,7 +127,8 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                     ["you want.", "Enjoy your free", "time without uploading", "every image", "manually :)", "////////////"]
                 ],  
                 def_col_width=1000,
-                select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+                select_mode=sg.TABLE_SELECT_MODE_EXTENDED,
+                selected_row_colors = ('red', 'white'),
                 headings=["File", "Title", "Tags", "Description", "Background", "Types", "Products", "Status"],
                 display_row_numbers=True,
                 justification="center",
@@ -138,8 +140,15 @@ def create(ctitle, ctags, cdesc, vtitle, vtags, vdesc):
                 [
                     [sg.Button("Start", disabled=True, size=(15, 2), key="SPR")],
                     [sg.Button("Stop", disabled=True, size=(15, 2), key="STOP")],
+                    [sg.Button("Remove", disabled=True, size=(15, 2), key="REMOVE")],
+                    [sg.Input(enable_events=True, key='IMPORTQUEUE', visible=False), 
+                    sg.FileBrowse('Import', file_types=(('Shelve', '.db.*'),), target='IMPORTQUEUE')],
+                    [sg.Input(enable_events=True, key='EXPORTQUEUE', visible=False), 
+                    sg.FileSaveAs('Export', file_types=(('Shelve', '.db'),), target='EXPORTQUEUE')],
+                
                 ]
             ),
+            sg.Image(background_color='white', key='PIKA')
         ],
     ]
 

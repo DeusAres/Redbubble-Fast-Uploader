@@ -1,3 +1,4 @@
+from cmath import pi
 import traceback
 import sys
 import threading
@@ -67,7 +68,7 @@ def openPlaceholder():
 
 def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
-    window = sg.Window("Redbubble upload", layout.create(ctitle, ctags, cdesc, vtitle, vtags, vdesc))
+    window = sg.Window("Redbubble upload", layout.create(ctitle, ctags, cdesc, vtitle, vtags, vdesc), finalize=True)
 
     # List of custom class entry (filename, preview, (x,y) 4 graph)
     queuePreview = queue()
@@ -75,9 +76,9 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
     # List of lists for displaying tasks
     queueUpload = queue()
 
+    pikaMoment = 'sleep'
     # Useless, lazy me should remove it
     #placeholder = openPlaceholder()
-
 
     # TREADING THE PREVIEW LOADING
     def threadPreview():
@@ -141,7 +142,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 
                 f.moveToCompleted(file)
                 f.updateStatus(window, queueUpload, "Sleeping")
-                sleep(uniform(100, 200))
+                sleep(uniform(50, 100))
                 f.updateStatus(window, queueUpload, "Cleared")
                 queueUpload.next()
 
@@ -151,11 +152,13 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                 # enabling if stopped
                 # disabling if no more entries
                 # disabling stop button and exiting thread
+
                 window["SPR"].Update("Start")
                 if str(e) == "Stopped":
                     window["SPR"].Update(disabled=False)
                 elif str(e) == "All clear":
                     window["SPR"].Update(disabled=True)
+                window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 300)
                 window["STOP"].Update(disabled=True)
                 window.refresh()
                 playsound("ka-ching.mp3")
@@ -166,13 +169,23 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
             except Exception as e:
                 #window["SPR"].Update('You are doing something terrible')
                 print(traceback.format_exc())
+                window["SPR"].Update(disabled=True)
                 window["STOP"].Update(disabled=True)
                 window.refresh()
                 playsound("ka-ching.mp3")
                 sys.exit()
 
+
+    
     while True:
-        event, values = window.read()
+        event, values = window.read(timeout=100)
+
+        if window['SPR'].Disabled is True and window['STOP'].Disabled is True:
+            if queueUpload.getStatus() == 'cleared':
+                pikaMoment = 'done'
+            elif queueUpload.getStatus() == 'pending':
+                pikaMoment = 'error'
+        window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 300)
 
         if event == sg.WINDOW_CLOSED or event == "Quit":
             break
@@ -205,6 +218,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                     while prevLock.locked():
                         sleep(1)
                     
+                    if pikaMoment == 'done':
+                        pikaMoment = 'sleep'
                     # Enable start
                     window["SPR"].Update(disabled=False)
                     
@@ -212,6 +227,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                     products = f.parseDict(values)
                     types = f.parseType(products)
                     color = f.colorOverride(values)
+                    copyFrom = f.copyOverride(values)
                     
                     while prevLock.locked():
                         sleep(1)
@@ -219,7 +235,7 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                     index = window["LIST"].get_indexes()[0]
                     queuePreview[index].addData(
                         title, tags, desc, types,
-                        color, products
+                        color, products, copyFrom
                     )
 
                     while prevLock.locked():
@@ -236,7 +252,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
                         sleep(1)
 
                     f.clearVariable(window)
-                           
+                    
+                    window['REMOVE'].Update(disabled=False)
             # REMOVING
             elif event == 'Remove':
                 # Different from adding because it's possible
@@ -260,6 +277,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
             # START BUTTON
             # Enabled by at least one entry added from listbox
             if window["SPR"].ButtonText == "Start":
+                pikaMoment = 'run'
+                window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 100)
                 # Settings pause and stop 
                 _stop = stop()
                 status = threading.Event()
@@ -281,6 +300,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
             # PAUSE BUTTON
             elif window["SPR"].ButtonText == "Pause":
+                pikaMoment = 'sleep'
+                window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 100)
                 # Pausing upload, updating task status, changing button text
                 status.clear()
                 window["SPR"].Update("Resume")
@@ -288,6 +309,8 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
             # RESUME BUTTON
             elif window["SPR"].ButtonText == "Resume":
+                pikaMoment = 'run'
+                window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 100)
                 # Resuming upload, updating task status, changing button text
                 status.set()
                 window["SPR"].Update("Pause")
@@ -302,16 +325,43 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
         if event == "STOP":
             # Disabling Stop Button, enabling Start Button, updating task status
             # Removing pause and Enabling Stop
+            pikaMoment = 'sleep'
+            window['PIKA'].update_animation("./gifs/"+pikaMoment+'.gif', 100)
+
             window["STOP"].Update(disabled=True)
             window["SPR"].Update("Start")
             status.set()
             _stop.clear()
             f.updateStatus(window, queueUpload, "Stopped")
 
+        # REMOVE BUTTON
+        if event == 'REMOVE':
+            index = values['QUEUE'][0]
+            if queueUpload.getCurrentIndex() == index:
+                window["STOP"].Update(disabled=True)
+                window["SPR"].Update("Start")
+                try:
+                    status.set()
+                    _stop.clear()
+                except:
+                    pass
+            
+            queueUpload.pop(index)
+            window["QUEUE"].Update(queueUpload.displayUpload())
+
+            if len(queueUpload.displayUpload()) == 0:
+                window['REMOVE'].Update(disabled=True)
+
+
+
+
         # PREVIEW CHANING
         if event == 'LIST':
             # Changing image preview of listbox
-            f.clearAndSetPrev(window['LIST'].get_indexes()[0], window, queuePreview)
+            try:
+                f.clearAndSetPrev(window['LIST'].get_indexes()[0], window, queuePreview)
+            except:
+                pass
             
         # IMPORT SETTINGS TO PRODUCT TAB
         if event == 'IMPORT' and values[event] != "":
@@ -329,6 +379,15 @@ def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
         if event == 'EXPORTTEXT' and values[event] != "":
             f.exportConstantText(values['EXPORTTEXT'], values)
 
-        # TODO TEST IMPORT EXPORT TEXT
+        if event == 'IMPORTQUEUE' and values[event] != "":
+            queueUpload = f.importQueue(values[event])
+            window["QUEUE"].Update(queueUpload.displayUpload())
+            window["SPR"].Update("Start", disabled=False)
+            #window["STOP"].Update(disabled=False)
+            window['REMOVE'].Update(disabled=False)
+
+        if event == 'EXPORTQUEUE' and values[event] != "":
+            f.exportQueue(queueUpload, values[event])
+        
 
     window.close()

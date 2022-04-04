@@ -973,16 +973,17 @@ def spreadPattern(canvas, pattern):
     pattern: image to spread
     """
 
-    s = min(*pattern.size)
+    w, h = pattern.size
 
     canvas = pasteItem(canvas, pattern, 0, 0)
-    while s < canvas.width or s < canvas.height:
+    while w < canvas.width or h < canvas.height:
 
-        if s < canvas.height:
-            canvas = pasteItem(canvas, cropToRealSize(canvas), 0, s)
-        if s < canvas.width:
-            canvas = pasteItem(canvas, cropToRealSize(canvas), s, 0)
-        s *= 2
+        if h < canvas.height:
+            canvas = pasteItem(canvas, cropToRealSize(canvas)[0], 0, h)
+        if w < canvas.width:
+            canvas = pasteItem(canvas, cropToRealSize(canvas)[0], w, 0)
+        w *= 2
+        h *= 2
 
     return canvas
 
@@ -995,7 +996,7 @@ def image_to_data(im):
 
     with BytesIO() as output:
         im.save(output, format="PNG")
-    return output.getvalue()
+        return output.getvalue()
 
 
 """ DEPRECATED THINGS OR NOT USED ANYMORE, PROBABLY PERFORMANCE ISSUES

@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 import sitedata
 from playsound import playsound
@@ -21,6 +23,8 @@ class bot:
         chrome_options.add_argument("user-data-dir=C:\\chromedriver")
         chrome_options.add_argument("profile-directory=Profile 2")
         chrome_options.add_argument("--log-level=3")
+        chrome_options.add_argument("--disable-site-isolation-trials")
+        #chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(
             executable_path="C:\\chromedriver\\chromedriver.exe",
             chrome_options=chrome_options
@@ -60,6 +64,19 @@ class bot:
         self.get_site = [
             lambda : self.driver.get(sitedata.site['portfolio']),
             lambda : sleep(5),
+        ]
+
+        self.get_copy = []
+
+        if file.copyFrom != '':
+            self.get_copy = [
+                lambda : find('copyFrom').send_keys(file.copyFrom),
+                lambda : sleep(uniform(3, 5)),
+                lambda : find('copyFrom').send_keys(Keys.RETURN),
+                lambda : sleep(uniform(3, 5)),
+            ]
+
+        self.get_copy += [
             lambda : find('settings').click(),
             lambda : sleep(3),
             lambda : find('copySettings').click(),
@@ -110,6 +127,10 @@ class bot:
         self.listCommands(file)
         
         for each in self.get_site:
+            wait()
+            each()
+
+        for each in self.get_copy:
             wait()
             each()
 
@@ -178,11 +199,14 @@ class bot:
     def pin(self, file):
         link = self.driver.current_url
         link = self.makeLink(link)
-        publish = False
+        publish = True
         if len(self.driver.window_handles) == 1:
             self.pinLoginCookie(None, None)
         
         self.driver.switch_to.window(self.driver.window_handles[1])
+        # Go pin builder page
+        self.driver.get(sitedata.pinData["pin_builder"])
+        
         file.makePin()
         
         # TODO parse link for ap page        
@@ -233,8 +257,7 @@ class bot:
             # Click publish 
             self.driver.find_element(By.XPATH, sitedata.pinData["publish_button"]).click()
             sleep(uniform(7, 15))
-            # Go pin builder page
-            self.driver.get(sitedata.pinData["pin_builder"])
+            
                     
         else:
             # Create new pin to publish
@@ -250,5 +273,5 @@ class bot:
         else:
             number = link[link.rfind("/")+1:]
 
-        link = "https://www.redbubble.com/shop/ap/" + number + "?asc=u"
+        link = "https://www.redbubble.com/shop/ap/" + number#+ "?asc=u"
         return link
