@@ -3,9 +3,10 @@ rotatedSticker.png
 sticker.png
 scrollable.py
 .vscode/settings.json
-__pycache__/*
+*/__pycache__/*
 test*
 squared.png
 .gitignore
 pin.jpg
 mainTest.py
+.vscode/

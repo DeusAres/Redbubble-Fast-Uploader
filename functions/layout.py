@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import sitedata
+from . import sitedata
 
 GSIZE = 300
 

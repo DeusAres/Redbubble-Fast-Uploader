@@ -1,6 +1,7 @@
 import os
 import json
-from classes import *
+from . import classes 
+from .classes import *
 import shelve
 
 # =====================================================
@@ -146,9 +147,11 @@ def parseStringsForUpload(values):
 
     title = stripChar(values, "CTITLE").replace("@text", stripChar(values, "VTITLE"))
     #tags = stripChar(values, "CTAGS") + ", " + stripChar(values, "VTAGS")
-    tagsText, tagsTags = values["VTAGS"].split('\n')
-
-    tags = stripChar(values, "CTAGS").replace("@text", tagsText.strip('\n')).replace("@tags", tagsTags.strip('\n'))
+    try:
+        tagsText, tagsTags = values["VTAGS"].split('\n')
+        tags = stripChar(values, "CTAGS").replace("@text", tagsText.strip('\n')).replace("@tags", tagsTags.strip('\n'))
+    except:
+        tags = stripChar(values, "CTAGS").replace("@text", stripChar(values, "VTAGS")).replace("@text", stripChar(values, "VTAGS"))
     #tags = tags.strip(',')
     desc = stripChar(values, "CDESC").replace("@text", stripChar(values, "VDESC"))
     return title, tags, desc

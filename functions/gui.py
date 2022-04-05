@@ -11,10 +11,10 @@ from playsound import playsound
 import PySimpleGUI as sg
 from PIL import Image
 
-import layout
-import redbubbleCopyWork as rcw
-from classes import *
-import functions as f
+from . import layout
+from . import redbubbleCopyWork as rcw
+from .classes import *
+from . import functions as f
 
 sg.LOOK_AND_FEEL_TABLE["DarkPoker"] = {
     "BACKGROUND": "#252525",
@@ -68,7 +68,11 @@ def openPlaceholder():
 
 def work(driver, ctitle="", ctags="", cdesc="", vtitle="", vtags="", vdesc=""):
 
-    window = sg.Window("Redbubble upload", layout.create(ctitle, ctags, cdesc, vtitle, vtags, vdesc), finalize=True)
+    window = sg.Window("Redbubble upload", layout.create(ctitle, ctags, cdesc, vtitle, vtags, vdesc), 
+                        finalize=True,
+                        resizable=True,
+                        scaling=1.0
+                    )
 
     # List of custom class entry (filename, preview, (x,y) 4 graph)
     queuePreview = queue()
