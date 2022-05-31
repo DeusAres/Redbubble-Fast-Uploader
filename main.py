@@ -5,7 +5,7 @@ os.chdir(Path(__file__).parents[0])
 import functions.gui as gui
 import functions.redbubbleCopyWork as rcw
 
-driver = rcw.bot("", "")
+driver = rcw.bot("", "") #Add username and password
 
 gui.work(driver=driver)
 
